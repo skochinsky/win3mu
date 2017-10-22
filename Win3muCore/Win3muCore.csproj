@@ -156,19 +156,19 @@
     <Compile Include="Windowing\WndClassKind.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PetaJson\PetaJson.csproj">
+    <ProjectReference Include="..\Sharp86\PetaJson\PetaJson.csproj">
       <Project>{32c1e6d1-46ba-4c3a-83bf-290e1c5d4690}</Project>
       <Name>PetaJson</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Sharp86DebuggerCore\Sharp86DebuggerCore.csproj">
+    <ProjectReference Include="..\Sharp86\Sharp86DebuggerCore\Sharp86DebuggerCore.csproj">
       <Project>{5dd0e722-c0f7-46c4-8fc4-13f56d881a75}</Project>
       <Name>Sharp86DebuggerCore</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Sharp86TextGuiDebugger\Sharp86TextGuiDebugger.csproj">
+    <ProjectReference Include="..\Sharp86\Sharp86TextGuiDebugger\Sharp86TextGuiDebugger.csproj">
       <Project>{460777c5-52d2-4680-945c-037026022c02}</Project>
       <Name>Sharp86TextGuiDebugger</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Sharp86\Sharp86.csproj">
+    <ProjectReference Include="..\Sharp86\Sharp86\Sharp86.csproj">
       <Project>{b7b582a0-ced8-497b-a9b8-ef152326c713}</Project>
       <Name>Sharp86</Name>
     </ProjectReference>

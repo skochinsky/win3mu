@@ -4,3 +4,6 @@
 [submodule "conframes"]
 	path = conframes
 	url = git@bitbucket.org:toptensoftware/conframes.git
+[submodule "Sharp86"]
+	path = Sharp86
+	url = git@bitbucket.org:toptensoftware/Sharp86.git

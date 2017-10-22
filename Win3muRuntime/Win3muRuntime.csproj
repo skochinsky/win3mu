@@ -57,7 +57,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Sharp86\Sharp86.csproj">
+    <ProjectReference Include="..\Sharp86\Sharp86\Sharp86.csproj">
       <Project>{b7b582a0-ced8-497b-a9b8-ef152326c713}</Project>
       <Name>Sharp86</Name>
     </ProjectReference>
