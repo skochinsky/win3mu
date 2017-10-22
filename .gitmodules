@@ -1,0 +1,6 @@
+[submodule "PetaJson"]
+	path = PetaJson
+	url = git@github.com:toptensoftware/PetaJson.git
+[submodule "conframes"]
+	path = conframes
+	url = git@bitbucket.org:toptensoftware/conframes.git
