@@ -56,6 +56,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Win3muCore\config.json">
+      <Link>config.json</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>

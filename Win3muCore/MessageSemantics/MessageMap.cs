@@ -128,10 +128,12 @@ namespace Win3muCore.MessageSemantics
 
         void Add(WndClassKind wk, ushort msg32, ushort msg16, Base semantics)
         {
+            /*
             if (wk == WndClassKind.Standard && (msg32 >= Win32.WM_USER || msg16 >= Win32.WM_USER))
             {
                 System.Diagnostics.Debug.Assert(false);
             }
+            */
 
             _messageInfos.Add(new MessageInfo()
             {
@@ -249,6 +251,7 @@ namespace Win3muCore.MessageSemantics
             Add(0x0048, new copy());               // WM_POWER
             Add(0x004D, new bypass());             // ??? (press F1 on checkers)
             Add(0x0053, new bypass());             // WM_HELP
+            Add(0x0060, new bypass());             // ??
             Add(0x007b, new bypass());             // WM_CONTEXTMENU
             Add(0x007c, new bypass());             // WM_STYLECHANGING
             Add(0x007d, new bypass());             // WM_STYLECHANGED
@@ -351,6 +354,9 @@ namespace Win3muCore.MessageSemantics
             Add(0x0323, new bypass());             // WM_DWMSENDICONICTHUMBNAIL   
             Add(0x0326, new bypass());             // WM_DWMSENDICONICLIVEPREVIEWBITMAP   
             Add(0x03B9, new copy());               // MM_MCINOTIFY
+
+            Add(0x0737, new bypass());             // ??
+            Add(0x0738, new bypass());             // ??
 
             // Dialog
             Add(WndClassKind.Dialog, 0x0400, new copy());      // DM_GETDEFID

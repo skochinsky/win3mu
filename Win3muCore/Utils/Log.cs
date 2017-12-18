@@ -18,7 +18,14 @@ namespace Win3muCore
                 output1 = Console.Out;
 
             if (outputFile != null)
+            {
+                // Make sure the folder exists
+                var folder = System.IO.Path.GetDirectoryName(outputFile);
+                if (!System.IO.Directory.Exists(folder))
+                    System.IO.Directory.CreateDirectory(folder);
+
                 output2 = new StreamWriter(outputFile, false, Encoding.UTF8);
+            }
         }
 
         public static void Close()
