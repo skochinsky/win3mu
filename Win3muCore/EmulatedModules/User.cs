@@ -911,11 +911,6 @@ namespace Win3muCore
         [EntryPoint(0x0072)]
         public uint DispatchMessage(ref Win16.MSG msg16)
         {
-            if (msg16.hWnd == 0x0020 &&    msg16.message == 0x0410)
-            {
-                int x = 3;
-            }
-
             Win32.MSG msg32;
             if (!_machine.Messaging.ConvertPostableMessageTo32(ref msg16, out msg32))
                 return 0;

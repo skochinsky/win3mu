@@ -58,6 +58,15 @@ namespace Win3muCore
 
             _disassembler = new Disassembler(this);
 
+            this.InstructionHook = () =>
+            {
+                if (logExecution)
+                {
+                    _disassembled = null;
+                    Log.WriteLine(_variableResolver.ResolveTokenizedString(_logExecutionFormat));
+                }
+            };
+
         }
 
         void UnhandledException(object sender, UnhandledExceptionEventArgs args)
@@ -234,11 +243,10 @@ namespace Win3muCore
 
                 try
                 {
-
                     // Run until finished
                     while (!_finished)
                     {
-                        Step();
+                        Run(1000000);
                     }
                 }
                 finally
@@ -281,17 +289,6 @@ namespace Win3muCore
             }
         }
                                                                                  
-        new void Step()
-        {                    
-            if (logExecution)
-            {
-                _disassembled = null;
-                Log.WriteLine(_variableResolver.ResolveTokenizedString(_logExecutionFormat));
-            }
-
-            base.Step();
-        }
-
 
         [Json("env")]
         public Dictionary<string, string> Environment = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
@@ -439,7 +436,8 @@ namespace Win3muCore
                 // Process until the sys return thunk is invoked
                 while (_sysRetDepth >= sysCallDepthAtCall)
                 {
-                    Step();
+                    // Hrm - this isn't too efficient but will do for now.
+                    Run(1);
                 }
 
                 if (logExecution)
@@ -460,6 +458,7 @@ namespace Win3muCore
 
         public void ExitProcess(int code)
         {
+            AbortRunFrame();
             _finished = true;
             _exitCode = code;
         }
