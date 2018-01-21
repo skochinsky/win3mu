@@ -2077,7 +2077,7 @@ namespace Win3muCore
         public short DialogBoxParam(ushort hModule, StringOrId name, HWND hWndParent, uint dlgProc, uint lParam)
         {
             // Get the module
-            var module = _machine.ModuleManager.GetModule(hModule) as Module16;
+            var module = hModule == 0 ? _machine.ProcessModule : _machine.ModuleManager.GetModule(hModule) as Module16;
             if (module == null)
                 return 0;
 
