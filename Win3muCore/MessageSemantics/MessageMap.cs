@@ -273,6 +273,7 @@ namespace Win3muCore.MessageSemantics
             Add(0x007b, new bypass());             // WM_CONTEXTMENU
             Add(0x007c, new bypass());             // WM_STYLECHANGING
             Add(0x007d, new bypass());             // WM_STYLECHANGED
+            Add(0x007e, new bypass());             // WM_DISPLAYCHANGE
             Add(0x007F, new bypass());             // WM_GETICON
             Add(0x0081, new WM_NC_OR_CREATE(true));// WM_NCCREATE
             Add(0x0082, new WM_NCDESTROY());       // WM_NCDESTROY
