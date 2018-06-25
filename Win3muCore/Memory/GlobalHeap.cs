@@ -39,7 +39,7 @@ namespace Win3muCore
         - 0x0008 - 0x7ff8 - 64k Segments (total 256Mb)
         - 0x8000 - 0xFFF8 - > 64k Segments
     */
-    public class GlobalHeap : IMemoryBus, IMemoryBusDebug
+    public class GlobalHeap : IMemoryBus
     {
         public GlobalHeap(Machine machine)
         {
@@ -70,78 +70,10 @@ namespace Win3muCore
             }
             public ushort flags;
             public byte[] buffer;
-            public byte[] snapshot;
             public LocalHeap localHeap;
             public string filename;
             public uint fileoffset;
 
-            public void ClearSnapShot()
-            {
-                snapshot = null;
-            }
-            public void TakeSnapShot()
-            {
-                if (snapshot == null)
-                {
-                    snapshot = new byte[buffer.Length];
-                    Buffer.BlockCopy(buffer, 0, snapshot, 0, buffer.Length);
-                }
-            }
-            public void GetState(int offset, MemoryState[] state)
-            {
-                int length = state.Length;
-                if (snapshot == null)
-                {
-                    for (int i = 0; i < length; i++)
-                    {
-                        if (offset + i < buffer.Length)
-                        {
-                            state[i] = MemoryState.ValidUnchanged;
-                        }
-                        else
-                        {
-                            state[i] = MemoryState.InvalidUnchanged;
-                        }
-                    }
-                    return;
-                }
-
-                for (int i = 0; i< length; i++)
-                {
-                    if (offset + i < buffer.Length && offset + i < snapshot.Length)
-                    {
-                        state[i] = buffer[offset + i] == snapshot[offset + i] ? MemoryState.ValidUnchanged : MemoryState.ValidChanged;
-                    }
-                    else if (i < buffer.Length)
-                    {
-                        state[i] = MemoryState.ValidChanged;
-                    }
-                    else if (i < snapshot.Length)
-                    {
-                        state[i] = MemoryState.InvalidChanged;
-                    }
-                    else
-                    {
-                        state[i] = MemoryState.InvalidChanged;
-                    }
-                }
-            }
-            public bool DidChange(int offset, uint length)
-            {
-                if (snapshot == null)
-                    return false;
-
-                if (offset + length < buffer.Length && offset + length < snapshot.Length)
-                {
-                    for (int i=0; i< length; i++)
-                    {
-                        if (buffer[offset + i] != snapshot[offset + i])
-                            return true;
-                    }
-                }
-
-                return false;
-            }
         }
 
         public class Selector
@@ -400,9 +332,6 @@ namespace Win3muCore
             if (sel == null)
                 return null;
 
-            if (forWrite)
-                sel.allocation.TakeSnapShot();
-
             // Return the buffer
             return sel.allocation.buffer;
         }
@@ -419,9 +348,6 @@ namespace Win3muCore
 
             // Work out offset in buffer
             offset = ((ptr.Hiword() >> 3) - sel.selectorIndex) << 16 | ptr.Loword();
-
-            if (forWrite)
-                sel.allocation.TakeSnapShot();
 
             // Return the buffer
             return sel.allocation.buffer;
@@ -498,10 +424,6 @@ namespace Win3muCore
                 if (sel.readOnly || sel.isCode)
                     throw new Sharp86.GeneralProtectionFaultException(seg, offset, false);
 
-                // Take snapshot for debug change tracking
-                if (_debugTracking)
-                    sel.allocation.TakeSnapShot();
-
                 // Write byte
                 sel.allocation.buffer[((seg >> 3) - sel.selectorIndex) << 16 | offset] = value;
             }
@@ -516,64 +438,6 @@ namespace Win3muCore
         }
         #endregion
 
-        #region IMemoryBusDebug
-        bool _debugTracking;
-        void IMemoryBusDebug.StartTracking()
-        {
-            _debugTracking = true;
-            ((IMemoryBusDebug)this).ResetState();
-        }
-
-        void IMemoryBusDebug.EndTracking()
-        {
-            _debugTracking = false;
-            ((IMemoryBusDebug)this).ResetState();
-        }
-
-        void IMemoryBusDebug.ResetState()
-        {
-            foreach (var r in _selectorAllocator.AllAllocations)
-            {
-                var selIndex = r.Position;
-                var sel = _pageMap[selIndex];
-                if (sel!= null)
-                {
-                    var alloc = sel.allocation;
-                    if (alloc!= null)
-                    {
-                        alloc.ClearSnapShot();
-                    }
-                }
-            }
-        }
-
-        void IMemoryBusDebug.GetMemoryState(ushort seg, ushort startOffset, MemoryState[] state)
-        {
-            var sel = GetSelector(seg);
-
-            if (sel==null || sel.allocation == null)
-            {
-                for (int i=0; i<state.Length; i++)
-                {
-                    state[i] = MemoryState.Invalid;
-                }
-                return;
-            }
-
-            sel.allocation.GetState(((seg >> 3) - sel.selectorIndex) << 16 | startOffset, state);
-        }
-        bool IMemoryBusDebug.DidMemoryChange(ushort seg, ushort offset, uint length)
-        {
-            var sel = GetSelector(seg);
-            if (sel == null)
-                return false;
-            var alloc = sel.allocation;
-
-            if (alloc == null)
-                return false;
-
-            return sel.allocation.DidChange(((seg >> 3) - sel.selectorIndex) << 16 | offset, length);
-        }
 
         public IEnumerable<Selector> AllSelectors
         {
@@ -590,7 +454,5 @@ namespace Win3muCore
                 }
             }
         }
-
-        #endregion
     }
 }

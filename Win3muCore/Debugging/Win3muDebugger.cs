@@ -57,7 +57,8 @@ namespace Win3muCore.Debugging
             }
             else
             {
-                _machine.NotifyCallWndProc16 = null;
+                if (_machine != null)
+                    _machine.NotifyCallWndProc16 = null;
             }
 
             base.PrepareBreakPoints();
