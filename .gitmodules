@@ -4,6 +4,6 @@
 	branch = master
 [submodule "Sharp86"]
 	path = Sharp86
-	url = git@bitbucket.org:toptensoftware/Sharp86.git
+	url = git@github.com:skochinsky/Sharp86.git
 	branch = master
 	
