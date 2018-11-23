@@ -33,6 +33,7 @@ namespace Win3mu
             if (args.Length == 0)
             {
                 MessageBox(IntPtr.Zero, "Usage: win3mu <programName> [/debug|/release] [/break] [/config:name]", "Win3mu", 0x10);
+                return 1;
             }
 
             return API.Run(args[0], args.Skip(1).ToArray(), 1 /* SW_SHOWNORMAL */);
