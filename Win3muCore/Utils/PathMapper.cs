@@ -167,7 +167,8 @@ namespace Win3muCore
 
         public string MapHostToGuest(string hostPath, bool forWrite)
         {
-            var mapped = TryMapHostToGuest(hostPath, forWrite);
+            string fullPath = Path.GetFullPath(hostPath);
+            var mapped = TryMapHostToGuest(fullPath, forWrite);
             if (mapped== null)
                 throw new InvalidOperationException(string.Format("The host path '{0}' can't be mapped to a valid DOS path", hostPath));
             return mapped;
