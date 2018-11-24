@@ -455,18 +455,16 @@ namespace Win3muCore
                         case RelocationType.OSFixUp:
                         {
                             var fpOpCode = data.ReadWord(reloc.offset);
-                            byte triByteTable = 0;
-                            var replace = MapFPOpCodeToWin87EmInt(fpOpCode, ref triByteTable);
-                            if (replace == 0)
-                            {
-                                throw new NotImplementedException(string.Format("Don't know how to apply OS Fixup for FP operation at {0:X4} {1:X2} {2:X2}   [p1={3}, p2={4}]", reloc.offset, fpOpCode >> 8, fpOpCode & 0xFF, reloc.param1, reloc.param2));
-                            }
+                            var addend = reloc.getOsFixupAddend(true);
+                            ushort replace = (ushort)(fpOpCode + addend);
                             data.WriteWord(reloc.offset, replace);
 
-                            if (triByteTable!=0)
+                            var addend2 = reloc.getOsFixupAddend(false);
+                            if (addend2 != 0)
                             {
-                                var rbyte = MapFpOpCodeToWin87TriByte(triByteTable, data.ReadByte(reloc.offset + 2));
-                                data.WriteByte(reloc.offset + 2, rbyte);
+                                var OpCode2 = data.ReadWord(reloc.offset+2);
+                                replace = (ushort)(OpCode2 + addend2);
+                                data.WriteWord(reloc.offset+2, replace);
                             }
 
                             //RecordOSFixup(i, reloc.offset, reloc.param1, reloc.param2, seg.offset + reloc.offset, fpOpCode, data.ReadWord(reloc.offset + 2));

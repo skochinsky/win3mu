@@ -73,6 +73,7 @@ namespace Win3muCore
 //            _moduleManager.LoadModule(new Shell());
             _moduleManager.LoadModule(new DdeML());
             _moduleManager.LoadModule(new Sound());
+            //_moduleManager.LoadModule(new Win87em());
 
             _disassembler = new Disassembler(this);
 
