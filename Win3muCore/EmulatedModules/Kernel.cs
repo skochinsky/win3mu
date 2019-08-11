@@ -805,10 +805,18 @@ namespace Win3muCore
         [EntryPoint(0x005F)]
         public ushort LoadLibrary(string strDllFile)
         {
-            var module = _machine.ModuleManager.LoadModule(strDllFile);
+            ModuleBase module = null;
+            try
+            {
+                module = _machine.ModuleManager.LoadModule(strDllFile);
+            }
+            catch (VirtualException e)
+            {
+                return (ushort)e.HResult;
+            }
+
             if (module == null)
                 return 0;
-
             return module.hModule;
         }
 
@@ -825,7 +833,37 @@ namespace Win3muCore
             _machine.ModuleManager.UnloadModule(module);
         }
 
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true, EntryPoint = "GetPrivateProfileIntW")]
+        public static extern uint GetTempFileName(string lpPathName, string lpPrefixString, uint uUnique, [Out] StringBuilder lpTempFileName);
+
         // 0061 - GETTEMPFILENAME
+        [EntryPoint(0x0061)]
+        public nint GetTempFileName(byte bDriveLetter, uint lpszPrefixString, ushort uUnique, uint lpszTempFileName)
+        {
+            /*
+             * The GetTempFileName function creates a temporary filename of the following form: 
+             *   drive:\path\prefixuuuu.TMP 
+             *   
+             * bDriveLetter	Specifies the suggested drive for the temporary filename. If this parameter is zero, Windows uses the current default drive. 
+            * lpszPrefixString	Points to a null-terminated string to be used as the temporary filename prefix. This string must consist of characters in the OEM-defined character set. 
+            * uUnique	Specifies an unsigned short integer. If this parameter is nonzero, it will be appended to the temporary filename. If the parameter is zero, Windows uses the current system time to create a number to append to the filename. 
+            * lpszTempFileName	Points to the buffer that will receive the temporary filename. This string consists of characters in the OEM-defined character set. This buffer should be at least 144 bytes in length to allow sufficient room for the path. 
+            */
+            char drive;
+            if (bDriveLetter == 0)
+                drive = 'C';
+            else
+                drive = (char)bDriveLetter;
+
+            string prefix = _machine.ReadString(lpszPrefixString);
+
+            StringBuilder result = new StringBuilder();
+            result.AppendFormat("{0}:\\temp\\{1}{2}.TMP", drive, prefix, uUnique);
+            nint rc = (nint)result.Length;
+            _machine.WriteString(lpszTempFileName, result.ToString(), (ushort)rc);
+            return rc;
+        }
+
         // 0062 - GETLASTDISKCHANGE
         // 0063 - GETLPERRMODE
         // 0064 - VALIDATECODESEGMENTS

@@ -98,7 +98,32 @@ namespace Win3muCore
             // Locate the module
             var locatedModuleGuest = LocateModule(fileOrModuleName, parentPath);
             if (locatedModuleGuest == null)
-                throw new VirtualException(string.Format("Can't find module '{0}'", fileOrModuleName));
+            {
+                //LoadLibrary Errors
+
+                //If the function fails, it returns one of the following error values: 
+
+                //Value Meaning
+
+                //0   System was out of memory, executable file was corrupt, or relocations were invalid. 
+                //2   File was not found. 
+                //3   Path was not found. 
+                //5   Attempt was made to dynamically link to a task, or there was a sharing or network - protection error.
+                //6   Library required separate data segments for each task. 
+                //8   There was insufficient memory to start the application.
+                //10  Windows version was incorrect.
+                //11  Executable file was invalid.Either it was not a Windows application or there was an error in the.EXE image.
+                //12  Application was designed for a different operating system.
+                //13  Application was designed for MS - DOS 4.0.
+                //14  Type of executable file was unknown.
+                //15  Attempt was made to load a real - mode application(developed for an earlier version of Windows).
+                //16  Attempt was made to load a second instance of an executable file containing multiple data segments that were not marked read - only.
+                //19  Attempt was made to load a compressed executable file.The file must be decompressed before it can be loaded. 
+                //20  Dynamic - link library(DLL) file was invalid.One of the DLLs required to run this application was corrupt.
+                //21  Application requires Microsoft Windows 32 - bit extensions.
+
+                throw new VirtualException(string.Format("Can't find module '{0}'", fileOrModuleName), 2);
+            }
 
             // Look for already loaded module
             var existingModule = _loadedModules.Values.FirstOrDefault(x => x.GetModuleFileName() == locatedModuleGuest);

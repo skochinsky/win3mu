@@ -26,8 +26,9 @@ namespace Win3muCore
 {
     public class VirtualException : Exception
     {
-        public VirtualException(string msg) : base(msg)
+        public VirtualException(string msg, int err = 0) : base(msg)
         {
+            HResult = err;
         }
 
         public VirtualException(string msg, params object[] args) : base(string.Format(msg, args))
